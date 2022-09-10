@@ -111,7 +111,7 @@ function UrljiForm({ form, dispatch }: UrljiFormProps) {
     <form method="POST" action="/urlji" onSubmit={handleSubmit}>
       <ExpandingTextarea name="url" rows={1} placeholder="https://" className="url" />
       <button type="submit" disabled={form?.submitting}>[{form?.submitting ? "Generating" : "Generate" } <URLji />]</button>
-      {form?.error ?? <span>{form?.error}</span>}
+      {form?.error && <span className="error">{form?.error}</span>}
     </form>
   );
 }

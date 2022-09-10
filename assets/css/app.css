@@ -12,6 +12,10 @@ header {
   word-break: break-all;
 }
 
+.error {
+  color: #cf0000;
+}
+
 textarea {
   border-style: none;
   background: none;

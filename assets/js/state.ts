@@ -84,7 +84,17 @@ export async function submitUrljiForm(dispatch: Dispatch, form: SubmitUrljiForm)
       body: form.body,
     });
     if (!response.ok) {
-      throw new Error("Something went wrong");
+      if (response.status === 400) {
+        const payload = await response.json();
+        dispatch({
+          type: URLJI_FORM_ERROR, payload: {
+            message: Object.entries(payload.errors as Record<string, string[]>).map(entry => `${entry[0]}: ${entry[1].join(", ")}`).join(", ")
+          }
+        });
+      } else {
+        throw new Error("Something went wrong");
+      }
+      return;
     }
     const payload = await response.json();
     dispatch({ type: URLJI_FORM_SUBMITTED, payload });

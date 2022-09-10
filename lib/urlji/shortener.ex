@@ -12,15 +12,19 @@ defmodule Urlji.Shortener do
   alias Urlji.Urlji
 
   def convert_to_urlji(url) do
-    {:ok, record} = insert_urlji(url)
-    if is_nil(record.id) do
-      Repo.one(
-        from(urlji in Urlji, where: urlji.url == ^url)
-      )
-    else
-      record
+    case insert_urlji(url) do
+    {:ok, record} ->
+      if is_nil(record.id) do
+        {:ok, Repo.one(
+          from(urlji in Urlji, where: urlji.url == ^url)
+        )}
+      else
+        {:ok, record}
+      end
+    {:error, error} -> {:error, error}
     end
   end
+
   def find_urlji_by_slug(slug) do
     Repo.one(
       from(urlji in Urlji, where: urlji.slug == ^slug)

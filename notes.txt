@@ -1,1 +1,10 @@
-TODO
+Hello!
+
+Assuming you have elixir, node, and docker installed, you should be able to run:
+- make setup
+- make server
+And open localhost:4000 to use the app.
+
+In place of text-based slugs, I thought it would be interesting to use emoji instead.
+With about 2200 emoji from the unicode standard, that gives us 2200^3 combinations
+which is about 5x as many combinations as a base-36 (a-z + 0-9) 6 digit slug.
