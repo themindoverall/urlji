@@ -1,44 +1,15 @@
-import React, { ChangeEvent, useCallback } from "react";
+import React from "react";
+import { reducer, submitUrljiForm, Dispatch, State } from "./state";
+import { copyToClipboard, ExpandingTextarea, useAnimation } from "./util";
 
 function URLji() {
   return <>URL<ruby>字<rt>ji</rt></ruby></>;
 }
 
-function ExpandingTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
-    const textarea = event.target;
-    textarea.style.height = 'auto';
-    textarea.style.height = `${event.target.scrollHeight}px`;
-    if (props.onChange) {
-      return props.onChange(event);
-    }
-  };
-
-  return <textarea {...props} onChange={handleChange}></textarea>;
+interface CopyToClipboardProps {
+  value: string;
 }
-
-function copyToClipboard(text: string) {
-  var textArea = document.createElement("textarea");
-  textArea.value = text;
-  
-  // Avoid scrolling to bottom
-  textArea.style.top = "0";
-  textArea.style.left = "0";
-  textArea.style.position = "fixed";
-
-  document.body.appendChild(textArea);
-  textArea.focus();
-  textArea.select();
-
-  let successful = document.execCommand('copy');
-  if (!successful) {
-    throw new Error("command failed");
-  }
-
-  document.body.removeChild(textArea);
-}
-
-function CopyToClipboard({ value }) {
+function CopyToClipboard({ value }: CopyToClipboardProps) {
   const [isCopied, setIsCopied] = React.useState(false);
 
   const handleClick = React.useCallback(() => {
@@ -60,33 +31,18 @@ function CopyToClipboard({ value }) {
   );
 }
 
-function useAnimation(callback) {
-  const requestRef = React.useRef<number>();
-  
-  React.useEffect(() => {
-    const animate = time => {
-      let canceled = false;
-      if (callback(time) === false) {
-        canceled = true;
-      }
-      if (!canceled) {
-        requestRef.current = requestAnimationFrame(animate);
-      }
-    }
-  
-    requestRef.current = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(requestRef.current!);
-  }, [callback]);
+interface ShowUrljiProps {
+  urlji: Required<State>["urlji"];
+  dispatch: Dispatch;
 }
-
-function ShowUrlji({ urlji, dispatch }) {
+function ShowUrlji({ urlji, dispatch }: ShowUrljiProps) {
   const goBack = () => {
     dispatch({ type: "GO_BACK" });
   }
 
   const [outputUrl, setOutputUrl] = React.useState("");
 
-  useAnimation(() => {
+  const animationCallback = React.useCallback(() => {
     const now = performance.now();
 
     const [baseUrl, ...slug] = urlji.url;
@@ -120,7 +76,9 @@ function ShowUrlji({ urlji, dispatch }) {
     if (time >= totalTime) {
       return false;
     }
-  });
+  }, [urlji, setOutputUrl]);
+
+  useAnimation(animationCallback);
 
   const [baseUrl, ...slug] = urlji.url;
   const urljiUrl = `${baseUrl}/${slug.join("")}`;
@@ -134,22 +92,12 @@ function ShowUrlji({ urlji, dispatch }) {
   );
 }
 
-async function submitUrljiForm(dispatch, form) {
-  dispatch({ type: "URLJI_FORM_SUBMITTING" });
-  try {
-    const response = await fetch(form.action, {
-      method: form.method,
-      body: form.body,
-    });
-    const payload = await response.json();
-    dispatch({ type: "URLJI_FORM_SUBMITTED", payload });
-  } catch (error) {
-    dispatch({ type: "URLJI_FORM_ERROR" });
-  }
+interface UrljiFormProps {
+  form: State["form"];
+  dispatch: Dispatch;
 }
-
-export function UrljiForm({ form, dispatch }) {
-  const handleSubmit = useCallback((event: React.FormEvent) => {
+function UrljiForm({ form, dispatch }: UrljiFormProps) {
+  const handleSubmit = React.useCallback((event: React.FormEvent) => {
     event.preventDefault();
     const htmlForm = event.target as HTMLFormElement;
     submitUrljiForm(dispatch, {
@@ -167,44 +115,6 @@ export function UrljiForm({ form, dispatch }) {
     </form>
   );
 }
-
-const reducer = (state, action) => {
-  switch (action.type) {
-    case "URLJI_FORM_SUBMITTING": {
-      return {
-        ...state,
-        form: {
-          submitting: true,
-        }
-      };
-    } break;
-    case "URLJI_FORM_SUBMITTED": {
-      return {
-        ...state,
-        form: {
-          submitting: false,
-        },
-        urlji: {
-          ...action.payload,
-          startTime: performance.now(),
-        }
-      };
-    } break;
-    case "URLJI_FORM_ERROR": {
-      return {
-        ...state,
-        form: {
-          submitting: false,
-          error: action.payload,
-        }
-      };
-    } break;
-    case "GO_BACK": {
-      return {};
-    } break;
-  }
-  return state;
-};
 
 export default function Index() {
   const [state, dispatch] = React.useReducer(reducer, {});

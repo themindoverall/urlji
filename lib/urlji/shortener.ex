@@ -4,6 +4,9 @@ defmodule Urlji.Shortener do
   """
 
   import Ecto.Query, warn: false
+
+  alias Urlji.Emoji
+
   alias Urlji.Repo
 
   alias Urlji.Urlji
@@ -17,6 +20,11 @@ defmodule Urlji.Shortener do
     else
       record
     end
+  end
+  def find_urlji_by_slug(slug) do
+    Repo.one(
+      from(urlji in Urlji, where: urlji.slug == ^slug)
+    )
   end
 
   defp insert_urlji(url) do
@@ -42,16 +50,9 @@ defmodule Urlji.Shortener do
     end
   end
 
-  def find_urlji_by_slug(slug) do
-    Repo.one(
-      from(urlji in Urlji, where: urlji.slug == ^slug)
-    )
-  end
-
-  def generate_slug() do
-    ["🐋", "😋", "🤫", "🤢", "🤠", "😨", "😈", "💩", "👺", "👾", "😹", "💚", "💯", "🎉"]
-    |> Enum.shuffle()
-    |> Enum.take(3)
+  defp generate_slug() do
+    0..2
+    |> Enum.map(fn _ -> Emoji.random_emoji end)
     |> Enum.join("")
   end
 end

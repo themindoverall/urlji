@@ -1,6 +1,10 @@
 defmodule UrljiWeb.UrljiController do
   use UrljiWeb, :controller
 
+  alias UrljiWeb.FallbackController
+
+  action_fallback FallbackController
+
   def home(conn, _params) do
     render(conn, "home.html")
   end
@@ -15,7 +19,9 @@ defmodule UrljiWeb.UrljiController do
   end
 
   def redirect_to_urlji(conn, %{"slug" => [slug]}) do
-    urlji = Urlji.Shortener.find_urlji_by_slug(slug)
-    redirect conn, external: urlji.url
+    case Urlji.Shortener.find_urlji_by_slug(slug) do
+    %{url: url} -> redirect conn, external: url
+    _ -> {:error, :not_found}
+    end
   end
 end
