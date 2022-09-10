@@ -50,3 +50,9 @@ config :phoenix, :json_library, Jason
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
+
+# Finally, allow a local override config file that is gitignored to be
+# loaded last.
+if File.exists?(Path.expand("config.local.exs", __DIR__)) do
+  import_config "config.local.exs"
+end

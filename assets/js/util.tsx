@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 
 export function useAnimation(callback) {
   const requestRef = React.useRef<number>();
@@ -41,7 +41,7 @@ export function copyToClipboard(text: string) {
 }
 
 export function ExpandingTextarea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement>) {
-  const handleChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = event.target;
     textarea.style.height = 'auto';
     textarea.style.height = `${event.target.scrollHeight}px`;

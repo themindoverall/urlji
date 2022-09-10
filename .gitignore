@@ -34,3 +34,5 @@ npm-debug.log
 
 # Ignore .local env files and the .local directory
 *.local
+*.local.ex
+*.local.exs

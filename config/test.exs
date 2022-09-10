@@ -8,7 +8,7 @@ import Config
 config :urlji, Urlji.Repo,
   username: "postgres",
   password: "postgres",
-  hostname: "localhost",
+  socket_dir: ".local/postgres/socket",
   database: "urlji_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: 10
