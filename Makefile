@@ -4,10 +4,9 @@ check:
 	docker-compose --version
 
 setup:
-	mix deps.get
 	npm install --prefix assets
 	docker-compose up -d
-	mix ecto.create
+	mix setup
 
 server:
 	mix phx.server
