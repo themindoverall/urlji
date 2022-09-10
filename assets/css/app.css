@@ -1,0 +1,30 @@
+/* This file is for your main application CSS */
+
+header {
+  text-align: center;
+}
+
+.url {
+  font-family: monospace;
+  font-weight: 300;
+  font-size: 2em;
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+textarea {
+  border-style: none;
+  background: none;
+  width: 100%;
+  height: auto;
+  resize: none;
+}
+
+button {
+  font-weight: 700;
+  font-size: 1.5em;
+  border-style: none;
+  background: none;
+  text-decoration: underline;
+  cursor: pointer;
+}
