@@ -15,7 +15,7 @@ defmodule UrljiWeb.UrljiController do
         slug = String.graphemes(urlji.slug)
         json conn, %{
           original_url: urlji.url,
-          url: ["http://192.168.7.24:4000"] ++ slug,
+          url: [current_base_url()] ++ slug,
         }
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
@@ -31,5 +31,11 @@ defmodule UrljiWeb.UrljiController do
       %{url: url} -> redirect conn, external: url
       _ -> {:error, :not_found}
     end
+  end
+
+  defp current_base_url() do
+    cur_uri  = UrljiWeb.Endpoint.struct_url()
+
+    UrljiWeb.Router.Helpers.url(cur_uri)
   end
 end
