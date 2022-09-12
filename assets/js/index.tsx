@@ -20,14 +20,9 @@ function CopyToClipboard({ value }: CopyToClipboardProps) {
     }, 2000);
   }, [value, setIsCopied]);
 
-  if (isCopied) {
-    return (
-      <span>Copied!</span>
-    );
-  }
-
+  const verbiage = isCopied ? "Copied" : "Copy to Clipboard";
   return (
-    <button type="button" onClick={handleClick}>[Copy to Clipboard]</button>
+    <button type="button" onClick={handleClick} disabled={isCopied}>[{verbiage}]</button>
   );
 }
 
