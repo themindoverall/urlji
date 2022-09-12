@@ -97,19 +97,36 @@ interface UrljiFormProps {
   dispatch: Dispatch;
 }
 function UrljiForm({ form, dispatch }: UrljiFormProps) {
+  const formRef = React.useRef<HTMLFormElement>(null);
+
   const handleSubmit = React.useCallback((event: React.FormEvent) => {
     event.preventDefault();
-    const htmlForm = event.target as HTMLFormElement;
+    const form = formRef.current;
+    if (!form) {
+      return;
+    }
+
     submitUrljiForm(dispatch, {
-      action: htmlForm.action,
-      method: htmlForm.method,
-      body: new FormData(htmlForm),
+      action: form.action,
+      method: form.method,
+      body: new FormData(form),
     });
   }, [dispatch]);
 
+  const handleKeyDown = React.useCallback((event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    const key = event.key;
+    if(key === 'Enter') {
+      const form = formRef.current;
+      event.preventDefault();
+      
+      // trigger a submit event to hit the handleSubmit flow
+      form?.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }))
+    }
+  }, []);
+
   return (
-    <form method="POST" action="/urlji" onSubmit={handleSubmit}>
-      <ExpandingTextarea name="url" rows={1} placeholder="https://" className="url" />
+    <form method="POST" action="/urlji" onSubmit={handleSubmit} ref={formRef}>
+      <ExpandingTextarea name="url" rows={1} placeholder="https://" className="url" onKeyDown={handleKeyDown} />
       <button type="submit" disabled={form?.submitting}>[{form?.submitting ? "Generating" : "Generate" } <URLji />]</button>
       {form?.error && <span className="error">{form?.error}</span>}
     </form>
