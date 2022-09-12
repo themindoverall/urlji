@@ -1,5 +1,7 @@
 # Urlji
 
+[urlji.webm](https://user-images.githubusercontent.com/122677/189708994-0d6e115e-1825-4c90-b8c8-70a75ef08000.webm)
+
 To start the app:
   * Have Erlang, Elixir, Node.js, Docker, and Docker-Compose installed
   * Use `make check` to do a basic check of your local environment. If it fails, it's probably because something isn't installed. If your docker compose is `docker compose` instead of `docker-compose` then update those references in the Makefile.
